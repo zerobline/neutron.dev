@@ -1,0 +1,69 @@
+[project]
+name = "neutron"
+version = "0.1.0"
+description = "Neutron - Multi-agent AI development platform"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.30.0",
+    "crewai[tools]>=1.15.2",
+    "pydantic>=2.0",
+    "pydantic-settings>=2.0",
+    "aiosqlite>=0.20.0",
+    "python-dotenv>=1.0.0",
+    "websockets>=12.0",
+    "litellm>=1.0.0",
+    "cryptography>=42.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-cov>=5.0",
+    "httpx>=0.27.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = [
+    "-ra",
+    "--cov=app",
+    "--cov-branch",
+    "--cov-report=term-missing:skip-covered",
+    "--cov-fail-under=100",
+    "--import-mode=importlib",
+]
+markers = [
+    "provider_gate: disable autouse provider setup for provider preflight tests",
+]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+filterwarnings = [
+    "ignore:SelectableGroups dict interface is deprecated. Use select.:DeprecationWarning:opentelemetry\\.util\\._importlib_metadata",
+    "ignore:Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.:DeprecationWarning:fastapi\\.testclient",
+    "ignore:function_calling_llm is deprecated and will be removed in a future release.:DeprecationWarning",
+    "ignore:.*allow_code_execution.*:DeprecationWarning:crewai",
+    "ignore:.*reasoning and self.planning_config.*:DeprecationWarning:crewai",
+    "ignore::DeprecationWarning:crewai.agent.core",
+    "ignore:deprecated:DeprecationWarning::366",
+    "ignore:deprecated:DeprecationWarning::377",
+]
+
+[tool.coverage.run]
+branch = true
+concurrency = ["thread"]
+source = ["app"]
+omit = ["tests/*"]
+
+[tool.coverage.report]
+fail_under = 100
+show_missing = true
+skip_covered = true
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"

@@ -1,0 +1,47 @@
+services:
+  - type: web
+    name: neutron-backend
+    runtime: docker
+    dockerfilePath: backend/Dockerfile
+    dockerContext: backend
+    plan: starter
+    healthCheckPath: /api/health
+    envVars:
+      - key: LLM_MODEL
+        sync: false
+      - key: APP_ENV
+        value: production
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: KIMI_API_KEY
+        sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: SERPER_API_KEY
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: COOKIE_SECURE
+        value: "true"
+      - key: CREDENTIAL_ENCRYPTION_KEY
+        sync: false
+      - key: DATABASE_PATH
+        value: /app/data/neutron.db
+      - key: PROJECTS_DIR
+        value: /app/data/projects
+      - key: MAX_BUILD_TOKENS
+        value: "80000"
+      - key: MAX_CONCURRENT_BUILDS
+        value: "3"
+      - key: ALLOW_SHARED_PROVIDER_KEYS
+        value: "false"
+      - key: HOST
+        value: 0.0.0.0
+      - key: PORT
+        value: 8000
+    disk:
+      name: neutron-data
+      mountPath: /app/data
+      sizeGB: 1

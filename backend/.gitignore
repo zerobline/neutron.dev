@@ -1,0 +1,12 @@
+backend\atoms_clone.egg-info
+.venv/
+.env
+.pytest_cache/
+__pycache__/
+*.pyc
+.coverage
+htmlcov/
+.tox/
+*.egg-info/
+dist/
+build/
