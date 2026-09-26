@@ -637,3 +637,20 @@ def test_get_agent_llm_raises_for_xai_oauth_without_access_token():
     ):
         with pytest.raises(ValueError, match="access token is not configured"):
             get_agent_llm("user-oauth")
+
+
+def test_get_agent_llm_gemini_disables_streaming():
+    with patch(
+        "app.crew.llm.provider_settings_service.resolve_litellm_config",
+        return_value={
+            "provider": "gemini",
+            "model": "gemini/gemini-3.5-flash-lite",
+            "api_key": "gemini-key",
+            "base_url": None,
+        },
+    ):
+        llm = get_agent_llm("user-gemini")
+
+    assert getattr(llm, "model") == "gemini/gemini-3.5-flash-lite"
+    assert getattr(llm, "api_key") == "gemini-key"
+    assert getattr(llm, "stream") is False
