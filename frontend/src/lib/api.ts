@@ -23,7 +23,7 @@ export interface ProviderModelsResponse {
   source: ProviderModelSource;
 }
 
-export type LlmProvider = "openai" | "anthropic" | "mistral" | "openai-compatible" | "moonshot" | "kimi" | "openrouter" | "groq" | "xai" | "xai-oauth" | "nvidia" | "custom";
+export type LlmProvider = "openai" | "anthropic" | "gemini" | "mistral" | "openai-compatible" | "moonshot" | "kimi" | "openrouter" | "groq" | "xai" | "xai-oauth" | "nvidia" | "custom";
 export type ProviderAuthMethod = "api_key" | "oauth";
 export type SearchProviderName = "brave" | "serper" | "tavily" | "exa";
 export type OAuthPollStatus = "pending" | "complete" | "expired" | "denied";
