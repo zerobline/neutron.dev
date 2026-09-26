@@ -40,6 +40,7 @@ const nav = [
 const providers: { value: LlmProvider; label: string }[] = [
   { value: "openai", label: "OpenAI" },
   { value: "anthropic", label: "Anthropic" },
+  { value: "gemini", label: "Google Gemini" },
   { value: "mistral", label: "Mistral" },
   { value: "kimi", label: "Kimi" },
   { value: "moonshot", label: "Moonshot" },
@@ -55,6 +56,7 @@ const providers: { value: LlmProvider; label: string }[] = [
 const providerPresets: Record<LlmProvider, Pick<ProviderSettings, "model" | "base_url">> = {
   openai: { model: "gpt-4o", base_url: null },
   anthropic: { model: "claude-sonnet-4-20250514", base_url: null },
+  gemini: { model: "gemini-3.5-flash-lite", base_url: null },
   mistral: { model: "mistral-large-latest", base_url: "https://api.mistral.ai/v1" },
   "openai-compatible": { model: "", base_url: "" },
   moonshot: { model: "kimi-k2", base_url: "https://api.moonshot.ai/v1" },
