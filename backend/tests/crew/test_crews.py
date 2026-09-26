@@ -142,3 +142,11 @@ def test_create_engineering_recovery_crew_without_context_or_tasks():
     crew = create_engineering_recovery_crew(engineer, [])
     assert crew.tasks == []
     assert crew.planning is False
+
+
+def test_gemini_crew_disables_streaming(monkeypatch):
+    agent = create_engineer_agent()
+    agent.llm.model = "gemini/gemini-3.5-flash-lite"
+    task = create_engineering_task(agent, "prompt")
+    crew = create_engineering_crew(agent, task)
+    assert crew.stream is False
