@@ -17,6 +17,7 @@ CACHE_TTL_SECONDS = 600
 _LITELLM_PROVIDER_MAP: dict[ProviderName, str | None] = {
     "openai": "openai",
     "anthropic": "anthropic",
+    "gemini": "gemini",
     "moonshot": "moonshot",
     "kimi": "openai",
     "openrouter": "openrouter",
