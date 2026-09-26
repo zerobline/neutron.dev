@@ -25,7 +25,7 @@ def test_list_provider_settings_creates_default_user_settings(temp_db):
         result = provider_settings_service.list_provider_settings(user.id)
 
         assert result.active_provider == "openai"
-        assert len(result.providers) == 12
+        assert len(result.providers) == 13
         openai = next(provider for provider in result.providers if provider.provider == "openai")
         assert openai.is_active is True
         assert openai.label == "OpenAI"
@@ -135,6 +135,7 @@ def test_decrypt_empty_key_returns_none():
 
 def test_normalized_provider_model_strips_prefixes():
     assert provider_settings_service.normalized_provider_model("openai", "openai/gpt-4o") == "gpt-4o"
+    assert provider_settings_service.normalized_provider_model("gemini", "gemini/gemini-3.5-flash-lite") == "gemini-3.5-flash-lite"
     assert provider_settings_service.normalized_provider_model("kimi", "openai/kimi-for-coding") == "kimi-for-coding"
     assert provider_settings_service.normalized_provider_model("custom", "vendor/model") == "vendor/model"
 
@@ -338,3 +339,28 @@ def test_first_time_authenticated_user_derives_model_but_not_shared_key_by_defau
     finally:
         for k, v in original.items():
             setattr(settings, k, v)
+
+
+def test_gemini_provider_settings_resolve_litellm_config(temp_db):
+    user = make_user("gemini-provider@example.com")
+    saved = provider_settings_service.update_provider_settings(
+        user.id,
+        ProviderSettingsUpdate(
+            provider="gemini",
+            model="gemini-3.5-flash-lite",
+            api_key="gemini-user-key",
+        ),
+    )
+    assert saved.provider == "gemini"
+    assert saved.label == "Google Gemini"
+    assert saved.effective_model == "gemini/gemini-3.5-flash-lite"
+    assert saved.is_connected is True
+    assert provider_settings_service.resolve_litellm_config(user.id) == {
+        "provider": "gemini",
+        "model": "gemini/gemini-3.5-flash-lite",
+        "api_key": "gemini-user-key",
+        "base_url": None,
+    }
+    ready, message = provider_settings_service.provider_ready_for_build(user.id)
+    assert ready is True
+    assert message == ""
