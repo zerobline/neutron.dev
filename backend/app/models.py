@@ -7,6 +7,7 @@ from pydantic import AliasChoices, BaseModel, ConfigDict, Field, field_validator
 ProviderName = Literal[
     "openai",
     "anthropic",
+    "gemini",
     "openai-compatible",
     "moonshot",
     "kimi",
