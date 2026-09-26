@@ -657,3 +657,21 @@ def test_get_agent_llm_gemini_disables_streaming():
     assert getattr(llm, "api_key") == "gemini-key"
     assert getattr(llm, "stream") is False
     assert getattr(llm, "llm_type", None) == "gemini"
+
+
+def test_get_agent_llm_gemini_sets_google_env_for_structured_fallback(monkeypatch):
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    monkeypatch.delenv("GOOGLE_API_KEY", raising=False)
+    with patch(
+        "app.crew.llm.provider_settings_service.resolve_litellm_config",
+        return_value={
+            "provider": "gemini",
+            "model": "gemini/gemini-3.5-flash-lite",
+            "api_key": "gemini-user-key",
+            "base_url": None,
+        },
+    ):
+        get_agent_llm("user-gemini-env")
+
+    assert os.environ["GEMINI_API_KEY"] == "gemini-user-key"
+    assert os.environ["GOOGLE_API_KEY"] == "gemini-user-key"
