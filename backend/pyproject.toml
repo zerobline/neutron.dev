@@ -6,7 +6,7 @@ requires-python = ">=3.10"
 dependencies = [
     "fastapi>=0.115.0",
     "uvicorn[standard]>=0.30.0",
-    "crewai[tools]>=1.15.2",
+    "crewai[tools,google-genai]>=1.15.2",
     "pydantic>=2.0",
     "pydantic-settings>=2.0",
     "aiosqlite>=0.20.0",
