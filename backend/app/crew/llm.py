@@ -801,7 +801,10 @@ def get_agent_llm(user_id: str | None = None, agent_id: str | None = None) -> LL
     provider_def = get_provider(config["provider"])
     kwargs: dict[str, Any] = {
         "model": config["model"],
-        "is_litellm": True,
+        # Gemini should use CrewAI's native Google GenAI provider. Forcing
+        # is_litellm=True bypasses the installed google-genai adapter and can
+        # lose native credential/tool behavior.
+        "is_litellm": config["provider"] != "gemini",
     }
     api_key = config["api_key"]
     if api_key:
