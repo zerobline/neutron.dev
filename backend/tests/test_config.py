@@ -597,3 +597,60 @@ def test_apply_provider_settings_various_providers_base_and_key():
     finally:
         for k, v in originals.items():
             setattr(settings, k, v)
+
+
+def test_infer_provider_gemini_prefixed_and_bare():
+    original_provider = settings.llm_provider
+    original_model = settings.llm_model
+    try:
+        settings.llm_provider = None
+        settings.llm_model = "gemini/gemini-3.5-flash-lite"
+        assert settings.infer_provider() == "gemini"
+        settings.llm_model = "gemini-3.5-flash-lite"
+        assert settings.infer_provider() == "gemini"
+    finally:
+        settings.llm_provider = original_provider
+        settings.llm_model = original_model
+
+
+def test_effective_litellm_config_gemini():
+    original = {
+        "llm_provider": settings.llm_provider,
+        "llm_model": settings.llm_model,
+        "gemini_api_key": settings.gemini_api_key,
+    }
+    try:
+        settings.llm_provider = "gemini"
+        settings.llm_model = "gemini-3.5-flash-lite"
+        settings.gemini_api_key = "test-gemini-key"
+        config = settings.effective_litellm_config()
+        assert config == {
+            "provider": "gemini",
+            "model": "gemini/gemini-3.5-flash-lite",
+            "api_key": "test-gemini-key",
+            "base_url": None,
+        }
+        assert settings.provider_model("gemini") == "gemini-3.5-flash-lite"
+    finally:
+        for key, value in original.items():
+            setattr(settings, key, value)
+
+
+def test_apply_provider_settings_gemini_key():
+    original = settings.gemini_api_key
+    try:
+        settings.gemini_api_key = "old-key"
+        settings.apply_provider_settings(
+            provider="gemini",
+            model="gemini-3.5-flash-lite",
+            clear_api_key=True,
+        )
+        assert settings.gemini_api_key is None
+        settings.apply_provider_settings(
+            provider="gemini",
+            model="gemini-3.5-flash-lite",
+            api_key="new-key",
+        )
+        assert settings.gemini_api_key == "new-key"
+    finally:
+        settings.gemini_api_key = original
