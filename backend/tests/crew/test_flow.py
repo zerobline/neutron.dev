@@ -1141,3 +1141,10 @@ def test_request_review_revision_limit_when_max_attempts_zero():
             run_attempt=lambda _prompt: MagicMock(raw="output"),
             store_result=lambda _result, _output: None,
         )
+
+
+def test_project_flow_allows_zero_arg_construction_for_crewai_fork():
+    flow = ProjectCreationFlow()
+    assert flow.state.project_id == ""
+    assert flow.state.user_prompt == ""
+    assert flow.checkpoint is False
