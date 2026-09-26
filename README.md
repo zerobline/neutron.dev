@@ -109,6 +109,20 @@ docker compose up --build -d
 
 Open [http://localhost:3000](http://localhost:3000), create a local account, and add a supported provider in **Settings > Cloud & AI**. Begin with a small brief and review the result before relying on it. Stop the stack with `docker compose down`; named volumes keep projects and the database until you explicitly remove them.
 
+
+### Google Gemini
+
+This fork includes native **Google Gemini / Google AI Studio** support in **Settings > Cloud & AI**. You can save a Gemini API key per user in the UI, or configure a shared development key with either:
+
+```env
+GEMINI_API_KEY=...
+# GOOGLE_API_KEY=...  # accepted alias
+LLM_PROVIDER=gemini
+LLM_MODEL=gemini/gemini-3.5-flash-lite
+```
+
+Per-user keys saved in the UI remain the recommended setup when `ALLOW_SHARED_PROVIDER_KEYS=false`.
+
 If the page does not open, run `docker compose ps` and wait for the services to become healthy. If a build cannot begin, check the provider configuration and whether the selected model is available to that API key. Never include keys, cookies, upload contents, or `.env` files in a public issue.
 
 ## Developing the application
