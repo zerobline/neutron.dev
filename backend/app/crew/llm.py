@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import logging
 import time
 from collections.abc import Callable, Iterator
@@ -809,6 +810,14 @@ def get_agent_llm(user_id: str | None = None, agent_id: str | None = None) -> LL
     api_key = config["api_key"]
     if api_key:
         kwargs["api_key"] = api_key
+        if config["provider"] == "gemini":
+            # Compatibility bridge for CrewAI/Instructor versions where
+            # structured-output conversion creates a secondary LiteLLM call
+            # that reads Google credentials from environment variables instead
+            # of reusing the LLM instance's api_key. The value comes from the
+            # already-decrypted per-user credential stored by Neutron.
+            os.environ["GEMINI_API_KEY"] = api_key
+            os.environ["GOOGLE_API_KEY"] = api_key
     elif config["provider"] == "openai-compatible":
         kwargs["api_key"] = "not-needed"
     elif provider_def.requires_api_key or config["provider"] == "xai-oauth":
