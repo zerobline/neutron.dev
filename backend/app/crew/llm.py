@@ -819,6 +819,12 @@ def get_agent_llm(user_id: str | None = None, agent_id: str | None = None) -> LL
     elif config["provider"] in {"xai", "xai-oauth"}:
         kwargs["base_url"] = "https://api.x.ai/v1"
 
+    # CrewAI's native Google GenAI adapter can yield provider stream chunks
+    # with no extractable text for tool-heavy tasks. Keep Gemini calls
+    # non-streaming; the outer Neutron Flow still emits lifecycle/progress events.
+    if config["provider"] == "gemini":
+        kwargs["stream"] = False
+
     # LiteLLM-level retries for transient HTTP failures (in addition to capacity backoff).
     kwargs.setdefault("num_retries", 2)
 
