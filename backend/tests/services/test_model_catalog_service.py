@@ -416,3 +416,20 @@ def test_fallback_without_catalog_uses_current_model(temp_db, monkeypatch):
     result = model_catalog_service.list_provider_models(user.id, "openai-compatible")
     assert result.current == "only-model"
     assert any(model.value == "only-model" for model in result.models)
+
+def test_gemini_model_normalization_and_catalog_provider(monkeypatch):
+    assert model_catalog_service._litellm_provider("gemini") == "gemini"
+    assert model_catalog_service._normalize_model(
+        "gemini",
+        "gemini/gemini-3.5-flash-lite",
+    ) == "gemini-3.5-flash-lite"
+    monkeypatch.setattr(
+        "app.services.model_catalog_service.get_valid_models",
+        lambda **kwargs: [
+            "gemini/gemini-3.5-flash-lite",
+            "gemini/text-embedding-004",
+        ],
+    )
+    models = model_catalog_service._catalog_models("gemini")
+    assert "gemini-3.5-flash-lite" in models
+    assert all("embed" not in model.lower() for model in models)
