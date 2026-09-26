@@ -21,6 +21,7 @@ class ProviderDefinition:
 PROVIDERS: dict[ProviderName, ProviderDefinition] = {
     "openai": ProviderDefinition("openai", "OpenAI", "gpt-4o", "openai"),
     "anthropic": ProviderDefinition("anthropic", "Anthropic", "claude-sonnet-4-20250514", "anthropic"),
+    "gemini": ProviderDefinition("gemini", "Google Gemini", "gemini-3.5-flash-lite", "gemini"),
     "moonshot": ProviderDefinition("moonshot", "Moonshot", "kimi-k2", "moonshot", "https://api.moonshot.ai/v1"),
     "kimi": ProviderDefinition("kimi", "Kimi", "kimi-for-coding", "openai", "https://api.kimi.com/coding/v1"),
     "openrouter": ProviderDefinition("openrouter", "OpenRouter", "openai/gpt-4o-mini", "openrouter", "https://openrouter.ai/api/v1"),
@@ -46,6 +47,7 @@ MODEL_OPTIONS = [
     {"value": "openai/gpt-4o", "label": "OpenAI GPT-4o"},
     {"value": "openai/gpt-4o-mini", "label": "OpenAI GPT-4o Mini"},
     {"value": "anthropic/claude-sonnet-4-20250514", "label": "Anthropic Claude Sonnet"},
+    {"value": "gemini/gemini-3.5-flash-lite", "label": "Google Gemini 3.5 Flash-Lite"},
     {"value": "moonshot/kimi-k2", "label": "Moonshot Kimi K2"},
     {"value": "kimi/kimi-for-coding", "label": "Kimi for Coding"},
     {"value": "openrouter/openai/gpt-4o-mini", "label": "OpenRouter GPT-4o Mini"},
