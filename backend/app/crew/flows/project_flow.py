@@ -192,8 +192,8 @@ class ProjectCreationFlow(Flow[ProjectFlowState]):
 
     def __init__(
         self,
-        project_id: str,
-        user_prompt: str,
+        project_id: str = "",
+        user_prompt: str = "",
         event_callback: Callable[[dict], None] | None = None,
         feedback_provider: WebSocketFeedbackProvider | None = None,
         mode: str = "team",
@@ -207,7 +207,15 @@ class ProjectCreationFlow(Flow[ProjectFlowState]):
         # Events are restricted to post-crew/post-method moments (see
         # checkpoints.SAFE_CHECKPOINT_EVENTS) so we do not model_dump while
         # streaming tools mutate PrivateAttr trackers mid-crew.
-        ckpt = build_checkpoint_config(project_id, restore_from=restore_from)
+        # CrewAI Flow.fork() instantiates the Flow class with no arguments
+        # before restoring checkpoint state. Avoid creating a checkpoint config
+        # for that temporary empty instance; fork_from_checkpoint() installs the
+        # real project-scoped checkpoint immediately after restoration.
+        ckpt = (
+            build_checkpoint_config(project_id, restore_from=restore_from)
+            if project_id
+            else False
+        )
         super().__init__(
             stream=True,
             checkpoint=ckpt,
