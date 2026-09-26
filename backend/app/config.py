@@ -12,6 +12,7 @@ load_dotenv(ENV_PATH)
 ProviderName = Literal[
     "openai",
     "anthropic",
+    "gemini",
     "openai-compatible",
     "moonshot",
     "kimi",
@@ -32,6 +33,10 @@ class Settings(BaseSettings):
     openai_api_key: str | None = None
     openai_base_url: str | None = None
     anthropic_api_key: str | None = None
+    gemini_api_key: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("GEMINI_API_KEY", "GOOGLE_API_KEY"),
+    )
     groq_api_key: str | None = None
     xai_api_key: str | None = None
     nvidia_api_key: str | None = None
@@ -115,6 +120,8 @@ class Settings(BaseSettings):
             return "moonshot"
         if model.startswith("anthropic/") or model.startswith("claude-"):
             return "anthropic"
+        if model.startswith("gemini/") or model.startswith("gemini-"):
+            return "gemini"
         if model.startswith("openrouter/"):
             return "openrouter"
         if model.startswith("groq/"):
@@ -138,6 +145,8 @@ class Settings(BaseSettings):
             return model.removeprefix("openai/")
         if provider == "moonshot" and model.startswith("moonshot/"):
             return model.removeprefix("moonshot/")
+        if provider == "gemini" and model.startswith("gemini/"):
+            return model.removeprefix("gemini/")
         if provider == "kimi" and model.startswith("kimi/"):
             return model.removeprefix("kimi/")
         if provider == "openrouter" and model.startswith("openrouter/"):
@@ -183,6 +192,8 @@ class Settings(BaseSettings):
             return self.openrouter_api_key
         if provider == "anthropic":
             return self.anthropic_api_key
+        if provider == "gemini":
+            return self.gemini_api_key
         if provider == "groq":
             return self.groq_api_key
         if provider in {"xai", "xai-oauth"}:
@@ -257,6 +268,13 @@ class Settings(BaseSettings):
                 "api_key": api_key,
                 "base_url": base_url,
             }
+        if provider == "gemini":
+            return {
+                "provider": provider,
+                "model": self._prefixed_model("gemini", model),
+                "api_key": api_key,
+                "base_url": None,
+            }
         if provider == "groq":
             return {
                 "provider": provider,
@@ -303,6 +321,7 @@ class Settings(BaseSettings):
         {"value": "openai/gpt-4o", "label": "OpenAI GPT-4o"},
         {"value": "openai/gpt-4o-mini", "label": "OpenAI GPT-4o Mini"},
         {"value": "anthropic/claude-sonnet-4-20250514", "label": "Claude Sonnet"},
+        {"value": "gemini/gemini-3.5-flash-lite", "label": "Google Gemini 3.5 Flash-Lite"},
         {"value": "mistral/mistral-large-latest", "label": "Mistral Large"},
         {"value": "moonshot/kimi-k2", "label": "Moonshot Kimi K2"},
         {"value": "kimi/kimi-for-coding", "label": "Kimi K2.7 Code"},
@@ -362,6 +381,8 @@ class Settings(BaseSettings):
                 self.openrouter_api_key = None
             elif provider == "anthropic":
                 self.anthropic_api_key = None
+            elif provider == "gemini":
+                self.gemini_api_key = None
             elif provider == "groq":
                 self.groq_api_key = None
             elif provider == "xai":
@@ -384,6 +405,8 @@ class Settings(BaseSettings):
                 self.openrouter_api_key = cleaned_api_key
             elif provider == "anthropic":
                 self.anthropic_api_key = cleaned_api_key
+            elif provider == "gemini":
+                self.gemini_api_key = cleaned_api_key
             elif provider == "groq":
                 self.groq_api_key = cleaned_api_key
             elif provider == "xai":
